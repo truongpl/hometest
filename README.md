@@ -39,7 +39,7 @@ The other dimension of the problem involves multi classification. When a machine
 By approaching the problem from both classification and multi classification problems, we can try to finetune a LLM with the output is (is_failure,failure_time)
 
 
-# Model choosing:
+# Model choosing
 I considered various Language Model (LLM) options for fine-tuning to address the task. After researching available resources, there are many of them, e.g:
 - LLaMA2 
 - Vicuna 
@@ -49,7 +49,7 @@ I considered various Language Model (LLM) options for fine-tuning to address the
 
 I decide to finetune with the ChatGPT because of the production readiness of it. 
 
-# First trial:
+# First trial
 In the initial trial, I created a system prompt instructing the LLM to respond exclusively in JSON format. The prompt specified that I would provide time series data, with the first line serving as the header. The LLM's task was to predict the following:
 
 Does the machine require maintenance within the next 24 hours? (Respond with "Yes" or "No")
@@ -71,15 +71,15 @@ Response for the LLM is the JSON:
 }
 
 This approach fail on both the cost and efficiency, cost me 20.95$ to finetune but the accuracy on test set is very low.
-On of the issue is the choosing of time series to create user prompts. 
-Another drawback is that the price of predictions: the total token for each request may be larger than 10k token which made the request cost (10 * 0.008 = 0.08$)
+One of the issue is the choosing of time series to create user prompts. 
+Another drawback is that the cost of predictions: the total token for each request may be larger than 10k token which made the request cost (10 * 0.008 = 0.08$) which makes this approach unfeasible for the test.
 
-# Second trial:
-Recognizing the challenges of the first trial, an alternative approach was adopted. Feeding raw time series data to the Large Language Model (LLM) was deemed impractical due to cost and inference time considerations. Instead, a decision was made to calculate the mean of values by day, resulting in a more manageable dataset:
+# Second trial
+Recognizing the challenges of the first trial, an alternative approach was adopted. Feeding raw time series data to the Large Language Model (LLM) was deemed impractical due to cost and inference time considerations. Instead, I calculate the mean of values by day, resulting in a more manageable dataset:
 
 The dataset consists of data for 100 machines over 365 days, with data recorded every hour, so I will have 100 x 365 average data instead of 100 x 365 x 24 (volt,rotate,pressure,vibration) data.
 
-To tackle the imbalance problems, I only pick 2 "normal" value for finetuning:
+To tackle the imbalance problem, I only pick 2 "normal" value for finetuning:
 
 - A value from the day preceding a failure is considered a positive class (which give the answer: the **next day will have failure**)
 - Two normal days, one is the next day after the failure are considered a negative class.
@@ -89,35 +89,30 @@ To optimize cost, I simplified the prompt to:
 
 With these adjustments, the finetuning cost is 3.20$ and the model performed as intended. However, it's worth noting that this model has a drawback: the accuracy of the binary classification affects the multi-class classification. In other words, if the binary classification result is incorrect, the multi-class classification is also fail too.
 
-# Wrap up the project:
+# Wrap up the project
 ## Source code structure
-.
-├── dataset
-├── deployment
-├── docker
-├── experiment -> I create the training data for ChatGPT
-└── src
-    ├── common_utils
-    └── platform
-        ├── api
-        │   └── pdm
-        ├── common_utils -> ./../common_utils/
-        └── services
-            └── pdm
+
+- dataset: we should symlink that dataset to this folder
+- deployment: has subfolders that contain ingress,platform, website and secret deployment.
+- docker: has Dockerfile of platform and website
+- experiment: I create the training data for ChatGPT
+- src: I separate to api and service: api is Restful implementation, service is use to call LLM endpoint.
+- main.py: use to test local before Docker's building
+- wsgi.py: use for gunicorn
             
 ## Backend development:
-- Flask and flask-restx were utilized to develop the RESTful API, which serves at `/pdm`.
+- Flask and flask-restx were utilized to develop the Restful API, which serves at `/pdm`.
 
 ## Web application:
 - I explored creating a web application but faced limitations due to my familiarity with HTML. Instead, I attempted to generate an `index.html` file using the Large Language Model (LLM) and adapted it to suit the problem. The resulting page features 24 rows for user input for sensor data. Users are not required to fill in all 24 rows, but the system considers it sufficient if more than 5 rows are provided.
 
 
-## Hosting preparation:
+## Hosting preparation
 -  Two Virtual Private Clouds (VPCs) were created on DigitalOcean to take advantage of their free credits: one for the backend and one for the website.
 -   Two subdomains were created: `website.ai4s.vn` for the website and `hometest.ai4s.vn` for the backend.
 -   SSL certificates were generated for both the website and backend in https://zerossl.com/.
 
-## Deployment:
+## Deployment
 The deployment steps by steps as below:
 -   I create the cluster by Microk8s
 -   Docker images were created for both the backend and frontend, with details specified in `docker/Dockerfile.platform` and `docker/Dockerfile.website`.
@@ -126,11 +121,11 @@ The deployment steps by steps as below:
 -   Create three secrets: regcred for CTR, api-tls, fe-tls for SSL of backend and website.
 -   MicroK8s Metallb was enabled, and the LoadBalancer was directed to the IP address of the backend node.
 
-## Testing:
+## Testing
 - In the *data_processing_v2.ipynb* I have use (8,2,2) ratio, first 8 months for finetuning, next 2 months for validation. We can use the remaining 2 months to test the accuracy of the model.
 - Testing result:
 - - Binary classification: 0.9157509157509157
 - - Multi classification: 0.9157509157509157 - this is pretty useless because the failure time is mostly at 6:00 (702 cases / 719 failure). So the trivia solution (always tell the failure time is 6:00) will have accuracy = 0,97635605).
 
-## Page site:
+## Page site
 - At fe.ai4s.vn, I have 24 rows for input and a submit button. After pressing the "Submit", a message will be display right below the submit button to show the message prediction.
