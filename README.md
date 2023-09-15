@@ -128,4 +128,4 @@ The deployment steps by steps as below:
 - - Multi classification: 0.9157509157509157 - this is pretty useless because the failure time is mostly at 6:00 (702 cases / 719 failure). So the trivia solution (always tell the failure time is 6:00) will have accuracy = 0,97635605).
 
 ## Page site
-- At fe.ai4s.vn, I have 24 rows for input and a submit button. After pressing the "Submit", a message will be display right below the submit button to show the message prediction.
+- At https://fe.ai4s.vn, I have 24 rows for input and a submit button. After pressing the "Submit", a message will be display right below the submit button to show the message prediction.
