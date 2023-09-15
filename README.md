@@ -4,18 +4,18 @@
 - We have 100 machine, the sensors of machine are recorded every hour in a year so we have totally: 100 x 365 x 24 records
 - After doing some EDA, the dataset is imbalance on the label of "failure", there are only 719 failure cases.
 - The failure time is also imbalance, most of the machines 's failure occur at 6:00.
--
-Upon initial consideration and made some quick research, I contemplated generating sentences like: 
+
+Upon initial consideration and made some quick research, I intend to generating sentences like: 
 "Given voltage as 0.12345, pressure as 0.6789...."  (Similar to the main idea of the paper https://arxiv.org/pdf/2210.10723.pdf)
 for each sample and feeding these sentences into a Language Model (LM) to create an embedding vector. The plan was to develop a traditional LSTM-based time series prediction model. However, this approach may not align with the specific requirements of the task because, in this case, the LSTM model would serve as the pattern recognizer not the LM.
 
 In the pursuit of solving this problem, a few challenges have arise:
 
-- It is a type of regression problem, where the primary goal is to predict the time of failure. 
+- The primary goal is to predict the time of failure in the future
 - Standard example notebooks available Kaggle may not be directly applicable, because most of them use the input of a failure day to predict the output. 
 - With above information, I decide to calculate the time_to_fail and use it as a base feature.
 
-To address these challenges, the problem that I tried to solve:
+In short, the problem that I am trying to solve:
 *Determine if a machine will fail within the next 24 hours and predict the time of its failure.*
 
 it's necessary to approach the problem in a two-fold manner:
@@ -77,9 +77,9 @@ Another drawback is that the price of predictions: the total token for each requ
 # Second trial:
 Recognizing the challenges of the first trial, an alternative approach was adopted. Feeding raw time series data to the Large Language Model (LLM) was deemed impractical due to cost and inference time considerations. Instead, a decision was made to calculate the mean of values by day, resulting in a more manageable dataset:
 
-The dataset now consists of data for 100 machines over 365 days, with data recorded every hour, so I will have 100 x 365 average data instead of 100 x 365 x 24 (volt,rotate,pressure,vibration) data.
+The dataset consists of data for 100 machines over 365 days, with data recorded every hour, so I will have 100 x 365 average data instead of 100 x 365 x 24 (volt,rotate,pressure,vibration) data.
 
-To address this, I only pick 2 "normal" value for finetuning:
+To tackle the imbalance problems, I only pick 2 "normal" value for finetuning:
 
 - A value from the day preceding a failure is considered a positive class (which give the answer: the **next day will have failure**)
 - Two normal days, one is the next day after the failure are considered a negative class.
@@ -87,7 +87,7 @@ To address this, I only pick 2 "normal" value for finetuning:
 To optimize cost, I simplified the prompt to:
 "Giving input volt,rotate,pressure,vibration,age answer with number,number, first number is 0/1, second is regression in 0-23 range'"
 
-With these adjustments, the finetuning cost 3.20$ and the model performed as intended. However, it's worth noting that this model has a drawback: the accuracy of the binary classification affects the multi-class classification. In other words, if the binary classification result is incorrect, it will also impact the accuracy of the multi-class classification.
+With these adjustments, the finetuning cost is 3.20$ and the model performed as intended. However, it's worth noting that this model has a drawback: the accuracy of the binary classification affects the multi-class classification. In other words, if the binary classification result is incorrect, the multi-class classification is also fail too.
 
 # Wrap up the project:
 ## Source code structure
@@ -119,7 +119,7 @@ With these adjustments, the finetuning cost 3.20$ and the model performed as int
 
 ## Deployment:
 The deployment steps by steps as below:
--   I create the cluster by Microk8s, follow their guide https://microk8s.io/docs
+-   I create the cluster by Microk8s
 -   Docker images were created for both the backend and frontend, with details specified in `docker/Dockerfile.platform` and `docker/Dockerfile.website`.
 -   Images were pushed to the DigitalOcean Container Registry.
 -   Ingress and Service resources were deployed.
@@ -131,3 +131,6 @@ The deployment steps by steps as below:
 - Testing result:
 - - Binary classification: 0.9157509157509157
 - - Multi classification: 0.9157509157509157 - this is pretty useless because the failure time is mostly at 6:00 (702 cases / 719 failure). So the trivia solution (always tell the failure time is 6:00) will have accuracy = 0,97635605).
+
+## Page site:
+- At fe.ai4s.vn, I have 24 rows for input and a submit button. After pressing the "Submit", a message will be display right below the submit button to show the message prediction.
