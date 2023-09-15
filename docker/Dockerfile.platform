@@ -1,0 +1,15 @@
+FROM python:3.8.10-slim
+
+
+# Container structure
+ADD src/platform/ /app
+ADD src/common_utils /app/common_utils
+ADD requirements.txt /app
+WORKDIR  /app
+RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org -r requirements.txt
+
+USER 1001
+EXPOSE 8000
+
+# # Run gunicorn
+ENTRYPOINT ["gunicorn", "--bind", "0.0.0.0:8000", "-w","1", "--threads", "10", "wsgi:app"]
