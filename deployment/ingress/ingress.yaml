@@ -17,7 +17,7 @@ spec:
             name: platform
             port:
               number: 80 # Point to service expose port
-  - host: website.ai4s.vn
+  - host: fe.ai4s.vn
     http:
       paths:
       - pathType: Prefix
@@ -32,5 +32,5 @@ spec:
     - hometest.ai4s.vn
     secretName: api-tls
   - hosts:
-    - website.ai4s.vn
-    secretName: website-tls
+    - fe.ai4s.vn
+    secretName: fe-tls
