@@ -2,8 +2,8 @@
 This take home test requires two weeks to tackle the problem. The dataset is the the [Microsoft Azure Predictive Maintenance](https://www.kaggle.com/datasets/arnabbiswas1/microsoft-azure-predictive-maintenance) dataset. I have dissmissed the company name.
 
 Below is the test requirements:
-![Page_1](https://github.com/truongpl/hometest/blob/main/assets/HT1_P1.jpg)
-![Page_2](https://github.com/truongpl/hometest/blob/main/assets/HT1_P2.jpg)
+![Page_1](https://github.com/truongpl/hometest/blob/main/assets/HT1_P1.png)
+![Page_2](https://github.com/truongpl/hometest/blob/main/assets/HT1_P2.png)
 
 # Solution
 ## Dataset description

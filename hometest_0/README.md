@@ -2,9 +2,9 @@
 This take home test requires 3-5 days to tackle the problem. The dataset is the the [SEED](https://www.kaggle.com/datasets/phhasian0710/seed-iv?resource=download) dataset. I have dissmissed the company name.
 
 Below is the test requirements:
-![Page_1](https://github.com/truongpl/hometest/raw/main/assets/HT0_P1.png)
-![Page_2](https://github.com/truongpl/hometest/raw/main/assets/HT0_P2.png)
-![Page_3](https://github.com/truongpl/hometest/raw/main/assets/HT0_P3.png)
+![Page_1](https://github.com/truongpl/hometest/blob/main/assets/HT0_P1.jpg)
+![Page_2](https://github.com/truongpl/hometest/blob/main/assets/HT0_P2.jpg)
+![Page_3](https://github.com/truongpl/hometest/blob/main/assets/HT0_P3.jpg)
 
 # Solution
 ## Dataset description
@@ -91,7 +91,7 @@ Exploring the “eye_feature_smooth” data:
 Because the eye feature is a kind of motion feature, it doesn't on a same kind of EEG feature so I
 decide to use a multimodal network: one has input is the EEG feature, the other has input is Eye
 feature.
-
+https://github.com/truongpl/hometest/blob/main/assets/HT0_ND0.png
 ![Network illustrate](https://github.com/truongpl/hometest/blob/main/assets/HT0_ND0.png)
 ![Network Parameters](https://github.com/truongpl/hometest/blob/main/assets/HT0_ND1.png)
 
