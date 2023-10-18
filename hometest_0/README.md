@@ -92,8 +92,8 @@ Because the eye feature is a kind of motion feature, it doesn't on a same kind o
 decide to use a multimodal network: one has input is the EEG feature, the other has input is Eye
 feature.
 
-![Network illustrate](https://github.com/truongpl/hometest/raw/main/assets/HT0_ND0.png)
-![Network Parameters]((https://github.com/truongpl/hometest/raw/main/assets/HT0_ND1.png)
+![Network illustrate](https://github.com/truongpl/hometest/blob/main/assets/HT0_ND0.png)
+![Network Parameters](https://github.com/truongpl/hometest/blob/main/assets/HT0_ND1.png)
 
 ### Experimental
 I create a train and test set with ratio = 0.2, implement a data generator to spawn the data for
