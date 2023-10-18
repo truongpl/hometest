@@ -1,0 +1,6 @@
+scikit-learn
+mne
+pandas
+tensorflow==2.4.0
+jupyter
+seaborn

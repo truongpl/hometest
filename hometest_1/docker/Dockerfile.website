@@ -1,0 +1,10 @@
+FROM nginx:latest
+
+# Copy the index.html file to the Nginx default directory
+ADD index.html /usr/share/nginx/html
+
+# Expose port 80 for HTTP traffic the HTTPs will be covered by our deployment
+EXPOSE 80
+
+# Start Nginx when the container starts
+CMD ["nginx", "-g", "daemon off;"]

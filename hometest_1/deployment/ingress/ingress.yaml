@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress
+  annotations:
+    ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: hometest.ai4s.vn
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: platform
+            port:
+              number: 80 # Point to service expose port
+  - host: fe.ai4s.vn
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: website
+            port:
+              number: 80 # Point to service expose port
+  tls:
+  - hosts:
+    - hometest.ai4s.vn
+    secretName: api-tls
+  - hosts:
+    - fe.ai4s.vn
+    secretName: fe-tls
